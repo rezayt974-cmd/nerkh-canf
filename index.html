@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نرخ نما - قیمت لحظه ای وی پی ان</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css');
+        body { 
+            font-family: 'Vazir', sans-serif; 
+            background-color: #0B0F19; 
+            color: #e2e8f0; 
+        }
+        .animate-fadeIn { 
+            animation: fadeIn 0.4s ease-out forwards; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="selection:bg-cyan-500/30 min-h-screen relative pb-20">
+
+    <header class="sticky top-0 z-40 bg-[#0B0F19] border-b border-slate-800 p-4 flex justify-between items-center" dir="ltr">
+        <div class="flex items-center gap-3">
+            <button id="menu-btn" class="text-slate-300 hover:text-white">
+                <i data-lucide="menu"></i>
+            </button>
+            <div class="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded cursor-pointer">
+                EN
+            </div>
+        </div>
+        <div class="flex items-center gap-2 cursor-pointer" onclick="switchView('home')">
+            <span class="text-white font-bold text-xl">نرخ نما</span>
+            <i data-lucide="bar-chart-2" class="text-blue-500"></i>
+        </div>
+    </header>
+
+    <div id="drawer-overlay" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity"></div>
+    
+    <div id="drawer" class="fixed inset-y-0 right-0 w-64 bg-[#0B0F19] z-50 transform translate-x-full transition-transform duration-300 ease-in-out border-l border-slate-800 flex flex-col">
+        <div class="p-4 flex justify-between items-center border-b border-slate-800" dir="ltr">
+            <button id="close-menu-btn" class="text-slate-400 hover:text-white">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <span class="text-white font-bold">نرخ نما</span>
+                <i data-lucide="bar-chart-2" class="text-blue-500"></i>
+            </div>
+        </div>
+        <nav class="flex-1 px-2 py-4 space-y-1 text-right" dir="rtl">
+            <button onclick="switchView('home')" class="w-full text-right px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">خانه</button>
+            <button onclick="switchView('home')" class="w-full text-right px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">قیمت ها</button>
+            <button onclick="switchView('sellers')" class="w-full text-right px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">فروشندگان</button>
+            <button onclick="switchView('home')" class="w-full text-right px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">درباره</button>
+            <button onclick="switchView('home')" class="w-full text-right px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">مستندات</button>
+        </nav>
+    </div>
+
+    <main class="max-w-md mx-auto p-4">
+        
+        <div id="home-view" class="space-y-4 animate-fadeIn">
+            <div class="text-right pt-6 pb-2">
+                <h1 class="text-3xl font-black text-white mb-2">نرخ نما</h1>
+                <p class="text-slate-400 text-sm">قیمت لحظه ای وی پی ان</p>
+            </div>
+
+            <div class="bg-[#131A2A] rounded-2xl p-5 border border-slate-800 relative overflow-hidden" dir="ltr">
+                <div class="flex justify-between items-start mb-6">
+                    <i data-lucide="key" class="text-cyan-500 w-8 h-8 opacity-80"></i>
+                    <div class="text-right">
+                        <span class="text-slate-400 text-sm">قیمت فعلی</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-6" dir="rtl">
+                    <div class="flex justify-center items-baseline gap-2 mb-1">
+                        <span id="current-price" class="text-4xl font-black text-cyan-400 tracking-tight"></span>
+                        <span class="text-cyan-400 font-bold text-lg">تومان</span>
+                    </div>
+                    <p class="text-slate-500 text-xs">تومان/GB</p>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2 bg-[#0B0F19] px-3 py-1.5 rounded-full border border-slate-800" dir="rtl">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span class="text-slate-300 text-xs">زنده</span>
+                    </div>
+                    
+                    <div id="current-trend" class="flex items-center gap-2 px-3 py-1.5 rounded bg-opacity-10 font-medium text-sm" dir="ltr">
+                        </div>
+                </div>
+            </div>
+
+            <div class="bg-[#131A2A] rounded-2xl p-5 border border-slate-800">
+                <div class="text-right mb-4">
+                    <span class="text-slate-400 text-sm">میانگین</span>
+                    <div class="flex justify-end items-baseline gap-1 mt-1" dir="rtl">
+                        <span id="avg-price" class="text-2xl font-bold text-white"></span>
+                        <span class="text-slate-400 text-xs">تومان</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between bg-[#0B0F19] rounded-lg p-1 mb-6" dir="rtl">
+                    <button class="text-xs px-3 py-1.5 rounded-md transition-colors bg-cyan-500 text-white">امروز</button>
+                    <button class="text-xs px-3 py-1.5 rounded-md transition-colors text-slate-400 hover:text-white">۷ روز</button>
+                    <button class="text-xs px-3 py-1.5 rounded-md transition-colors text-slate-400 hover:text-white">۱۵ روز</button>
+                    <button class="text-xs px-3 py-1.5 rounded-md transition-colors text-slate-400 hover:text-white">۱ ماهه</button>
+                    <button class="text-xs px-3 py-1.5 rounded-md transition-colors text-slate-400 hover:text-white">۱ سال</button>
+                </div>
+
+                <div class="h-32 w-full relative overflow-hidden flex items-end">
+                    <svg viewBox="0 0 400 100" class="w-full h-full drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#06b6d4" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,80 Q20,80 40,60 T100,20 T150,25 T200,80 T260,30 T320,10 T380,60 L400,60 L400,100 L0,100 Z" fill="url(#cyanGrad)" />
+                        <path d="M0,80 Q20,80 40,60 T100,20 T150,25 T200,80 T260,30 T320,10 T380,60 L400,60" fill="none" stroke="#06b6d4" stroke-width="2.5" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4" id="stats-grid">
+                </div>
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-black text-white text-right mb-1">جدول قیمت ها</h2>
+                <p class="text-slate-400 text-sm text-right mb-4">آخرین رکوردهای قیمت ثبت‌شده</p>
+                
+                <div id="price-table" class="space-y-3">
+                    </div>
+            </div>
+        </div>
+
+        <div id="sellers-view" class="space-y-4 animate-fadeIn hidden">
+            <div class="text-right pt-6 pb-6 border-b border-slate-800">
+                <h1 class="text-3xl font-black text-white mb-2">فروشندگان معتبر</h1>
+                <p class="text-slate-400 text-sm">لیست ربات‌ها و فروشندگان تایید شده</p>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <a href="https://t.me/blueping_online_bot?start=start" target="_blank" rel="noopener noreferrer" class="block bg-gradient-to-r from-[#131A2A] to-[#1a253a] rounded-2xl p-5 border border-slate-700 hover:border-cyan-500 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-black/50" dir="rtl">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-cyan-900/40 rounded-full flex items-center justify-center border border-cyan-500/30">
+                                <svg class="w-8 h-8 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.282-.346-.094l-6.4 4.024-2.76-.86c-.6-.185-.61-.6.125-.89l10.736-4.135c.5-.186.94.126.825.86z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xl font-bold text-white">بلو پینگ</h3>
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i>
+                                </div>
+                                <p class="text-cyan-400 text-sm mt-1 text-left" dir="ltr">@blueping_online_bot</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-slate-500"></i>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-700/50 flex justify-between items-center">
+                        <span class="text-xs text-slate-400">اتصال مستقیم به ربات خرید</span>
+                        <span class="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded text-xs">تایید شده</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="fixed bottom-0 w-full bg-[#0B0F19] border-t border-slate-800 p-3 text-center z-30">
+        <p class="text-slate-500 text-xs flex justify-center items-center gap-1" dir="rtl">
+            توسعه یافته توسط: <a href="https://t.me/imrely" target="_blank" rel="noopener noreferrer" class="text-cyan-500 font-bold hover:underline" dir="ltr">@imrely</a>
+        </p>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Data
+        const mockInitialData = [
+            { id: '1', date: '1405/03/18', price: 24757, changeVal: 495, changePct: 22.00, isUp: true, timestamp: 1 },
+            { id: '2', date: '1405/03/18', price: 25252, changeVal: 758, changePct: 2.00, isUp: true, timestamp: 2 },
+            { id: '3', date: '1405/03/18', price: 26010, changeVal: 11705, changePct: 3.00, isUp: true, timestamp: 3 },
+            { id: '4', date: '1405/03/18', price: 37715, changeVal: 16217, changePct: 45.00, isUp: true, timestamp: 4 },
+            { id: '5', date: '1405/03/18', price: 53932, changeVal: 1348, changePct: 43.00, isUp: true, timestamp: 5 },
+            { id: '6', date: '1405/03/18', price: 55280, changeVal: -9950, changePct: 2.50, isUp: false, timestamp: 6 },
+            { id: '7', date: '1405/03/18', price: 45330, changeVal: 9519, changePct: -18.00, isUp: false, timestamp: 7 },
+            { id: '8', date: '1405/03/18', price: 54849, changeVal: 5485, changePct: 21.00, isUp: true, timestamp: 8 },
+            { id: '9', date: '1405/03/18', price: 60334, changeVal: -25944, changePct: 10.00, isUp: false, timestamp: 9 },
+            { id: '10', date: '1405/03/18', price: 34390, changeVal: 8380, changePct: 32.22, isUp: true, timestamp: 10 },
+        ];
+
+        // Sort data descending by timestamp like React code
+        mockInitialData.sort((a, b) => b.timestamp - a.timestamp);
+
+        // Utilities
+        const toPersianNum = (num) => {
+            if (num === null || num === undefined) return '';
+            const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return num.toString().replace(/\d/g, x => farsiDigits[x]);
+        };
+
+        const formatCurrency = (num) => {
+            return toPersianNum(num.toLocaleString('en-US'));
+        };
+
+        // Render Data
+        const renderData = () => {
+            const currentPriceObj = mockInitialData[0];
+            const allPrices = mockInitialData.map(p => p.price);
+            const max = Math.max(...allPrices);
+            const min = Math.min(...allPrices);
+            const avg = Math.round(allPrices.reduce((a, b) => a + b, 0) / allPrices.length);
+
+            // Update Current Price
+            document.getElementById('current-price').innerText = formatCurrency(currentPriceObj.price);
+            document.getElementById('avg-price').innerText = formatCurrency(avg);
+
+            // Update Current Trend
+            const trendEl = document.getElementById('current-trend');
+            trendEl.className = `flex items-center gap-2 px-3 py-1.5 rounded bg-opacity-10 font-medium text-sm ${currentPriceObj.isUp ? 'bg-emerald-500 text-emerald-500' : 'bg-red-500 text-red-500'}`;
+            
+            const trendIcon = currentPriceObj.isUp 
+                ? `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`
+                : `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>`;
+            
+            trendEl.innerHTML = `
+                <span>${currentPriceObj.isUp ? '+' : '-'}${toPersianNum(currentPriceObj.changePct)}%</span>
+                <span>${currentPriceObj.isUp ? '+' : '-'}${formatCurrency(currentPriceObj.changeVal)}</span>
+                ${trendIcon}
+            `;
+
+            // Render Stats Grid
+            const statsData = [
+                { label: 'بیشترین', value: max, sub: 'اوج' },
+                { label: 'کمترین', value: min, sub: 'حمایت' },
+                { label: 'میانگین', value: avg, sub: 'روند' }
+            ];
+            
+            document.getElementById('stats-grid').innerHTML = statsData.map(item => `
+                <div class="bg-[#131A2A] rounded-2xl p-5 border border-slate-800 flex justify-between items-center text-right" dir="rtl">
+                    <div>
+                        <div class="text-slate-400 text-xs mb-1">${item.label}</div>
+                        <div class="text-xl font-bold text-cyan-400">${formatCurrency(item.value)}</div>
+                    </div>
+                    <div class="text-slate-500 text-xs text-left">
+                        <div>${item.sub}</div>
+                        <div>تومان</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Price Table
+            document.getElementById('price-table').innerHTML = mockInitialData.map(item => `
+                <div class="bg-[#131A2A] rounded-xl p-4 border border-slate-800 flex justify-between items-center" dir="rtl">
+                    <div class="space-y-2">
+                        <div class="text-white font-bold text-lg">${formatCurrency(item.price)} <span class="text-xs text-slate-400 font-normal">تومان</span></div>
+                        <div class="text-sm ${item.isUp ? 'text-emerald-500' : 'text-red-500'}" dir="ltr">
+                            ${item.isUp ? '+' : '-'}${toPersianNum(item.changePct)}%
+                        </div>
+                    </div>
+                    
+                    <div class="text-left space-y-1">
+                        <div class="text-slate-400 text-xs">تاریخ: ${toPersianNum(item.date)}</div>
+                        <div class="text-slate-400 text-xs">قیمت/گیگ: ${formatCurrency(Math.floor(item.price/10))} تومان</div>
+                        <div class="text-xs mt-2 ${item.isUp ? 'text-emerald-500' : 'text-red-500'}" dir="ltr">
+                            تغییر 24h: ${item.isUp ? '+' : '-'}${formatCurrency(item.changeVal)} <span class="text-slate-400">تومان</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // UI Interactions
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+
+        const toggleMenu = () => {
+            const isClosed = drawer.classList.contains('translate-x-full');
+            if (isClosed) {
+                drawer.classList.remove('translate-x-full');
+                drawer.classList.add('translate-x-0');
+                drawerOverlay.classList.remove('hidden');
+                drawerOverlay.classList.add('block');
+            } else {
+                drawer.classList.add('translate-x-full');
+                drawer.classList.remove('translate-x-0');
+                drawerOverlay.classList.add('hidden');
+                drawerOverlay.classList.remove('block');
+            }
+        };
+
+        const switchView = (viewId) => {
+            document.getElementById('home-view').classList.toggle('hidden', viewId !== 'home');
+            document.getElementById('sellers-view').classList.toggle('hidden', viewId !== 'sellers');
+            if(!drawer.classList.contains('translate-x-full')) {
+                toggleMenu();
+            }
+        };
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        drawerOverlay.addEventListener('click', toggleMenu);
+
+        // Init
+        renderData();
+
+    </script>
+</body>
+</html>
