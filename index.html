@@ -96,6 +96,15 @@
                 </div>
             </div>
 
+            <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-lg text-right mt-4">
+    <h3 class="text-gray-400 text-xs font-medium">قیمت ترافیک اوتباند (هر گیگابایت)</h3>
+    <div class="flex items-baseline justify-start mt-3 direction-ltr">
+        <span class="text-gray-500 ml-1 text-xs">تومان</span>
+        <span id="outbound-price" class="text-2xl font-bold text-cyan-400">0</span>
+    </div>
+            </div>
+            
+
             <div class="bg-[#131A2A] rounded-2xl p-5 border border-slate-800">
                 <div class="text-right mb-4">
                     <span class="text-slate-400 text-sm">میانگین</span>
@@ -331,6 +340,14 @@
             if (fetchedData.length > 0) {
                 window.siteData = fetchedData;
                 window.renderData(); // به محض دریافت دیتا، ظاهر سایت را آپدیت می‌کند
+                const outboundField = document.getElementById('outbound-price');
+if (outboundField && fetchedData.length > 0) {
+    const latestData = fetchedData[0];
+    if (latestData.outboundPrice !== undefined) {
+        outboundField.innerText = Number(latestData.outboundPrice).toLocaleString('fa-IR');
+    }
+}
+                
             }
         });
     </script>
